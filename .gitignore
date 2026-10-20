@@ -1,0 +1,14 @@
+# Personal learning context (kept out of commits by default)
+/devpost/learner-profile.md
+
+# Local credentials and secrets
+.env
+.env.*
+!.env.example
+
+# Local runtime data and Python tooling
+/instance/
+/.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]

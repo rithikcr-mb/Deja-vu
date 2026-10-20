@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}The Construct — DEJAVU{% endblock %}
+{% block content %}
+<section class="panel construct-panel" aria-labelledby="construct-title">
+  {% if welcome_name %}<p class="welcome" role="status">WELCOME TO THE CONSTRUCT, {{ welcome_name }}.</p>{% endif %}
+  <p class="eyebrow">OPERATOR: {{ name }} / READY</p>
+  <h1 id="construct-title">Enter a topic.<br><span>Begin the download.</span></h1>
+  <p class="lead">Choose one idea you want to understand better.</p>
+  <form action="{{ url_for('main.request_lesson') }}" method="post" class="stack-form">
+    <label for="topic">Learning topic</label>
+    <input id="topic" name="topic" type="text" value="{{ topic }}" placeholder="e.g. Process Scheduling" required autofocus>
+    {% if error %}
+      <p class="message {% if error_kind == 'setup' %}setup-message{% else %}error{% endif %}" role="alert">{{ error }}</p>
+    {% endif %}
+    <button class="button" type="submit">DOWNLOAD LESSON</button>
+  </form>
+  {% if fake_mode %}<p class="mode-note">DETERMINISTIC LOCAL TEST MODE — lesson content is sample content.</p>{% endif %}
+</section>
+{% endblock %}

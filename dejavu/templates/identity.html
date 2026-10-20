@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Identity — DEJAVU{% endblock %}
+{% block content %}
+<section class="panel identity-panel" aria-labelledby="identity-title">
+  <p class="eyebrow">FIRST CONNECTION / PROFILE NOT FOUND</p>
+  <h1 id="identity-title">IDENTITY NOT FOUND</h1>
+  <p class="lead">What should I call you?</p>
+  <form action="{{ url_for('main.save_identity') }}" method="post" class="stack-form">
+    <label for="display-name">Display name</label>
+    <input id="display-name" name="display_name" type="text" value="{{ name }}" autocomplete="nickname" required autofocus>
+    {% if error %}<p class="message error" role="alert">{{ error }}</p>{% endif %}
+    <button class="button" type="submit">CONFIRM IDENTITY</button>
+  </form>
+</section>
+{% endblock %}

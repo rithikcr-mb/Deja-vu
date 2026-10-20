@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ topic }} — DEJAVU Lesson{% endblock %}
+{% block content %}
+<section class="lesson-heading" aria-labelledby="lesson-title">
+  <p class="eyebrow">DOWNLOAD COMPLETE / THREE CONCEPT CARDS</p>
+  <h1 id="lesson-title">{{ topic }}</h1>
+  {% if fake_mode %}<p class="mode-note">DETERMINISTIC LOCAL TEST MODE — sample lesson content.</p>{% endif %}
+</section>
+<section class="lesson-grid" aria-label="Lesson cards">
+  {% for card in cards %}
+  <article class="lesson-card">
+    <p class="eyebrow">{{ card.role|replace('_', ' ')|upper }}</p>
+    <h2>{{ card.heading }}</h2>
+    <p>{{ card.body }}</p>
+  </article>
+  {% endfor %}
+</section>
+<p class="lesson-note">Read all three cards. Your next step will continue from this lesson.</p>
+{% endblock %}

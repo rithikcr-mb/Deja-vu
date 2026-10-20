@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050907">
+  <title>{% block title %}DEJAVU — The Construct{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead" aria-label="DEJAVU">
+      <span class="status-light" aria-hidden="true"></span>
+      <span class="wordmark">DEJAVU</span>
+      <span class="masthead-state">LOCAL CONSTRUCT / ONLINE</span>
+    </header>
+    {% block content %}{% endblock %}
+    <footer class="footer">A learning construct · local session</footer>
+  </main>
+</body>
+</html>
