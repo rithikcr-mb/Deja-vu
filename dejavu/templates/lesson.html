@@ -15,5 +15,14 @@
   </article>
   {% endfor %}
 </section>
-<p class="lesson-note">Read all three cards. Your next step will continue from this lesson.</p>
+<section class="battle-launch panel" aria-labelledby="battle-launch-title">
+  <p class="eyebrow">LESSON READY / ENCOUNTER SETUP</p>
+  <h2 id="battle-launch-title">Test what you learned.</h2>
+  <p class="lesson-note">Twelve questions across three rounds. Your answers shape the fight.</p>
+  {% if battle_error %}<p class="message error" role="alert">{{ battle_error }}</p>{% endif %}
+  <form action="{{ url_for('main.start_battle') }}" method="post">
+    <input type="hidden" name="action_id" value="{{ battle_setup_id }}">
+    <button class="button" type="submit">INITIATE COMBAT</button>
+  </form>
+</section>
 {% endblock %}

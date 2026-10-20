@@ -24,3 +24,21 @@ class LessonGenerationResult(StrictContentModel):
     title: str | None
     cards: list[LessonCard] = Field(min_length=0, max_length=3)
     reason_code: Literal["no_teachable_subject"] | None
+
+
+class BattleQuestion(StrictContentModel):
+    question: str = Field(min_length=1, max_length=500)
+    options: list[str] = Field(min_length=4, max_length=4)
+    correct_option_index: int = Field(ge=0, le=3)
+    explanation: str = Field(min_length=1, max_length=700)
+    concept_label: str = Field(min_length=1, max_length=120)
+    concept_explanation: str = Field(min_length=1, max_length=400)
+
+
+class BattleRound(StrictContentModel):
+    round_number: int = Field(ge=1, le=3)
+    questions: list[BattleQuestion] = Field(min_length=4, max_length=4)
+
+
+class BattleSet(StrictContentModel):
+    rounds: list[BattleRound] = Field(min_length=3, max_length=3)

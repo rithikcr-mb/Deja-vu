@@ -66,6 +66,31 @@ input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(87, 242, 13
 .lesson-card h2 { margin-top: 20px; }
 .lesson-card p:last-child { color: #c3d4c8; }
 .lesson-note { margin: 24px 0 60px; color: var(--muted); }
+.battle-launch { margin: 20px 0 60px; padding: clamp(22px, 4vw, 36px); }
+.battle-launch h2 { margin-top: 16px; }
+.battle-heading { padding: clamp(38px, 7vw, 72px) 0 20px; }
+.battle-heading h1 { overflow-wrap: anywhere; }
+.battle-status { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 12px 0 20px; }
+.health-panel { padding: 18px; border: 1px solid var(--line); background: var(--surface); }
+.health-label { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font: 600 .72rem var(--mono); }
+.health-label strong { color: var(--ink); }
+.health-track { height: 10px; margin-top: 12px; overflow: hidden; background: #1b2920; }
+.health-track span { display: block; height: 100%; transition: width .2s ease; }
+.player-health { background: var(--green); }
+.enemy-health { background: #ff747b; }
+.battle-panel { width: min(760px, 100%); margin: 18px auto 60px; }
+.battle-panel h2 { margin: 14px 0 22px; }
+.answer-form fieldset { display: grid; gap: 10px; margin: 0 0 20px; padding: 0; border: 0; }
+.answer-form legend { margin-bottom: 12px; color: var(--muted); font: 600 .72rem var(--mono); text-transform: uppercase; }
+.answer-option { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 1px solid var(--line); background: #080f0b; cursor: pointer; font-weight: 400; }
+.answer-option:has(input:checked) { border-color: var(--green); background: rgba(87, 242, 135, .07); }
+.answer-option input { flex: 0 0 18px; width: 18px; min-height: 18px; margin: 3px 0 0; accent-color: var(--green); }
+.answer-option span { line-height: 1.45; }
+.answer-result > p:not(.eyebrow) { color: #c3d4c8; }
+.answer-result .correct-answer { color: var(--green); font-weight: 700; }
+.action-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+.button-secondary { border-color: var(--line); background: transparent; color: var(--ink); }
+.button-secondary:hover { border-color: var(--green); background: rgba(87, 242, 135, .07); }
 .footer { padding: 24px 0 36px; border-top: 1px solid rgba(87, 242, 135, .12); font-size: .65rem; }
 
 @media (max-width: 760px) {
@@ -74,5 +99,6 @@ input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(87, 242, 13
   .masthead-state { font-size: .57rem; }
   .panel { margin: 44px auto; padding: 24px 20px; }
   .lesson-grid { grid-template-columns: 1fr; }
+  .battle-status { grid-template-columns: 1fr; }
   .lesson-card { min-height: 0; }
 }

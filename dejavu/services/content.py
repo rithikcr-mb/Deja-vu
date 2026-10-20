@@ -8,13 +8,17 @@ from typing import Any
 
 from pydantic import ValidationError
 
-from dejavu.services.ai_schemas import LessonGenerationResult
+from dejavu.services.ai_schemas import BattleSet, LessonGenerationResult
 
 logger = logging.getLogger(__name__)
 
 
 class InvalidLessonContent(ValueError):
     """Structured output is malformed or does not satisfy the lesson rules."""
+
+
+class InvalidBattleContent(ValueError):
+    """Generated battle questions do not satisfy the expected contract."""
 
 
 def validate_lesson_result(raw: Any) -> LessonGenerationResult:
@@ -60,3 +64,36 @@ def validate_lesson_result(raw: Any) -> LessonGenerationResult:
         logger.warning("Lesson output contained blank card text.")
         raise InvalidLessonContent("Lesson text cannot be blank.")
     return result
+
+
+def validate_battle_set(raw: Any) -> BattleSet:
+    try:
+        if isinstance(raw, BattleSet):
+            battle_set = raw
+        elif isinstance(raw, (str, bytes, bytearray)):
+            battle_set = BattleSet.model_validate_json(raw)
+        else:
+            battle_set = BattleSet.model_validate(raw)
+    except (ValidationError, ValueError, TypeError, json.JSONDecodeError) as error:
+        logger.warning("Battle structured-output validation failed (%s).", type(error).__name__)
+        raise InvalidBattleContent("Battle response did not match its schema.") from error
+
+    if [round_data.round_number for round_data in battle_set.rounds] != [1, 2, 3]:
+        raise InvalidBattleContent("Battle rounds must be ordered from 1 to 3.")
+
+    for round_data in battle_set.rounds:
+        for question in round_data.questions:
+            normalized_options = [option.strip().casefold() for option in question.options]
+            if any(not option for option in normalized_options) or len(set(normalized_options)) != 4:
+                raise InvalidBattleContent("Each question needs four distinct options.")
+            if any(
+                not value.strip()
+                for value in (
+                    question.question,
+                    question.explanation,
+                    question.concept_label,
+                    question.concept_explanation,
+                )
+            ):
+                raise InvalidBattleContent("Question content cannot be blank.")
+    return battle_set

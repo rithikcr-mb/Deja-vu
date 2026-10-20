@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Round {{ battle.round_number }} — DEJAVU{% endblock %}
+{% block content %}
+<section class="battle-heading" aria-labelledby="battle-title">
+  <p class="eyebrow">REGULAR ENCOUNTER / ROUND {{ battle.round_number }} OF {{ battle.round_count }}</p>
+  <h1 id="battle-title">{{ topic }}<br><span>Hold your ground.</span></h1>
+  {% if fake_mode %}<p class="mode-note">DETERMINISTIC LOCAL TEST MODE — sample questions.</p>{% endif %}
+</section>
+
+<section class="battle-status" aria-label="Battle health">
+  <div class="health-panel">
+    <div class="health-label"><span>OPERATOR</span><strong>{{ battle.player_hp }} / 100 HP</strong></div>
+    <div class="health-track" role="meter" aria-label="Operator health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ battle.player_hp }}"><span class="player-health" style="width: {{ battle.player_hp }}%"></span></div>
+  </div>
+  <div class="health-panel enemy-panel">
+    <div class="health-label"><span>ENEMY</span><strong>{{ battle.enemy_hp }} / 75 HP</strong></div>
+    <div class="health-track" role="meter" aria-label="Enemy health" aria-valuemin="0" aria-valuemax="75" aria-valuenow="{{ battle.enemy_hp }}"><span class="enemy-health" style="width: {{ (battle.enemy_hp / 75 * 100)|round }}%"></span></div>
+  </div>
+</section>
+
+{% if error %}<p class="message setup-message" role="alert">{{ error }}</p>{% endif %}
+
+{% if battle.phase == "question" and battle.question %}
+<section class="panel battle-panel" aria-labelledby="question-title">
+  <p class="eyebrow">QUESTION {{ battle.question_number }} OF {{ battle.questions_in_round }}</p>
+  <h2 id="question-title">{{ battle.question.question }}</h2>
+  <form action="{{ url_for('main.answer_battle_question') }}" method="post" class="answer-form">
+    <input type="hidden" name="action_id" value="{{ battle.attempt_id }}">
+    <fieldset>
+      <legend>Choose one answer</legend>
+      {% for option in battle.question.options %}
+      <label class="answer-option">
+        <input type="radio" name="answer" value="{{ loop.index0 }}" required>
+        <span>{{ option }}</span>
+      </label>
+      {% endfor %}
+    </fieldset>
+    <button class="button" type="submit">LOCK ANSWER</button>
+  </form>
+</section>
+{% elif battle.phase == "answered" and battle.result %}
+<section class="panel battle-panel answer-result" aria-live="polite">
+  <p class="eyebrow">{% if battle.result.is_correct %}CORRECT / ENEMY TAKES 25 DAMAGE{% else %}INCORRECT / OPERATOR LOSES 20 HP{% endif %}</p>
+  <h2>{% if battle.result.is_correct %}Good read.{% else %}The correct answer is:{% endif %}</h2>
+  {% if not battle.result.is_correct %}<p class="correct-answer">{{ battle.result.correct_answer }}</p>{% endif %}
+  <p>{{ battle.result.explanation }}</p>
+  {% if battle.next_action == "defeat" %}
+    <p class="message error">Operator health reached zero. The saved mistakes will remain.</p>
+    <div class="action-row">
+      <form action="{{ url_for('main.retry_battle_round') }}" method="post">
+        <input type="hidden" name="action_id" value="{{ battle.transition_id }}">
+        <button class="button" type="submit">RETRY ROUND</button>
+      </form>
+      <form action="{{ url_for('main.return_from_battle') }}" method="post">
+        <input type="hidden" name="action_id" value="{{ battle.transition_id }}">
+        <button class="button button-secondary" type="submit">RETURN TO CONSTRUCT</button>
+      </form>
+    </div>
+  {% else %}
+    <form action="{{ url_for('main.advance_battle') }}" method="post">
+      <input type="hidden" name="action_id" value="{{ battle.transition_id }}">
+      <button class="button" type="submit">{% if battle.next_action == "round_clear" %}CONTINUE{% else %}NEXT QUESTION{% endif %}</button>
+    </form>
+  {% endif %}
+</section>
+{% elif battle.phase == "complete" %}
+<section class="panel battle-panel" aria-live="polite">
+  <p class="eyebrow">REGULAR ENCOUNTER COMPLETE</p>
+  <h2>Three rounds cleared.</h2>
+  <p>Your missed concepts are saved. Return to the Construct or keep this session open for the next encounter.</p>
+  <form action="{{ url_for('main.return_from_battle') }}" method="post">
+    <input type="hidden" name="action_id" value="{{ battle.transition_id }}">
+    <button class="button button-secondary" type="submit">RETURN TO CONSTRUCT</button>
+  </form>
+</section>
+{% endif %}
+{% endblock %}
