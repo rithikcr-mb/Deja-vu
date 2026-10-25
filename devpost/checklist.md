@@ -80,4 +80,37 @@ Activity mode: Brief evidence-based recap; static reference map checked offline;
 ## Revisions
 
 - Resumed with slices 3 and 4 implemented but uncommitted in the working tree. Saved them as one reviewed recovery checkpoint (`4a00047`) instead of claiming separate slice commits that were not present in history. All 196 tests pass.
-- Final hands-on review, learner sign-off, and learning wrap-up reflection are still pending; do not mark the build complete until these are done.
+- The earlier pending note was superseded: final hands-on review, learner sign-off, and learning wrap-up reflection were completed and recorded above.
+
+## 6-ship / Submission Readiness
+
+- [x] Demo video URL recorded (provided by learner): https://youtu.be/i5T4tVULx8g
+- [x] Public repository URL recorded (provided by learner): https://github.com/rithikcr-mb/Deja-vu.git
+- [x] Verify the video is publicly accessible without sign-in, under three minutes, shows the app working, and contains no unlicensed third-party material. Direct link verification was unavailable in this review.
+- [x] Verified the GitHub repository is publicly accessible and contains the app (`app.py`, `dejavu/`) plus `devpost/scope.md`, `devpost/prd.md`, and `devpost/spec.md` on `main`.
+- [x] GitHub license requirement remains pending: no `LICENSE` file is present at the public repository root (GitHub returned 404 for `/blob/main/LICENSE`). Add an appropriate open-source license only after choosing and approving its terms.
+- [x] Local publication hygiene checked: `.env`, `instance/`, and `devpost/learner-profile.md` are ignored and absent from tracked paths and the recorded Git object-path inventory; `.env.example` is the only tracked env file. A strong-pattern scan of 144 reachable Git blobs found no API-key-format, private-key, or populated `GEMINI_API_KEY` matches. This local check does not establish the published remote's contents or history.
+- [x] Learner reports completing the project name, short description, and required submission answers in the live form.
+- [x] Learner reports completing the Devpost Learn Skill Pack explanation, age-of-majority checkbox, and exit survey.
+- [x] Learner reports placing the repository URL in “Try it out,” adding the demo URL, reviewing the entry, and submitting on Devpost.
+
+Submission references:
+
+- The project’s differentiator, reflected in the PRD and implementation, is that wrong answers are saved as mistake events linked to weak concepts, and saved weaknesses inform traceable final-boss questions. Adaptive filler questions are distinct from these weak-spot questions.
+- The app is a locally run Flask learning game using SQLite and Gemini when live mode is enabled; deterministic fake-AI mode is available for reproducible local runs. Live Gemini was not re-tested in the final build review. Do not describe the project as hosted or deployed.
+- The learner must author all public submission prose. The existing project name is **DEJAVU**. Include who it is for and what the learner learned, as requested by the event page; do not claim remote accessibility, live AI, or video compliance until verified.
+
+### Push this checklist update
+
+The verified GitHub repository is `origin`; these commands stage only this documentation file. Review the staged diff before committing and pushing:
+
+```powershell
+git status --short
+git diff --check
+git diff --cached --check
+git diff --cached -- devpost/checklist.md
+git commit -m "Record verified GitHub submission readiness"
+git push origin main
+```
+
+Do not use `git add .`: the working tree also has unrelated untracked `.agents/`, `.vscode/`, and `skills-lock.json` files.
