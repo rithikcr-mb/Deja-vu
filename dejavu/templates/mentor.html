@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Returning Operator — DEJAVU{% endblock %}
+{% block content %}
+<section class="mentor-stage" aria-labelledby="mentor-title">
+  <figure class="mentor-presence is-speaking">
+    <img class="mentor-portrait" src="{{ url_for('static', filename='img/mentor.svg') }}" alt="The Construct's mentor" width="360" height="440">
+    <figcaption class="mentor-signal"><span class="status-light" aria-hidden="true"></span> MEMORY LINK / STABLE</figcaption>
+  </figure>
+
+    <div class="mentor-copy">
+    <p class="eyebrow">RETURNING OPERATOR / {{ context.display_name }}</p>
+    {% if seeded_history %}<p class="seed-badge">SEEDED DEMO HISTORY</p>{% endif %}
+    <h1 id="mentor-title">You have been here before.</h1>
+    <p class="lead">{{ context.display_name }}, the Construct kept the thread of your last session.</p>
+
+    {% if error %}<p class="message setup-message" role="alert">{{ error }}</p>{% endif %}
+
+    <section class="last-session memory-card" aria-labelledby="last-session-title" data-origin="{{ context.last_session.origin }}">
+      <div>
+        <p class="eyebrow" id="last-session-title">LAST SESSION</p>
+        <h2>{{ context.last_session.topic }}</h2>
+      </div>
+      <p class="timestamp"><time datetime="{{ context.last_session.occurred_at_utc }}">{{ format_utc(context.last_session.occurred_at_utc) }}</time></p>
+    </section>
+
+    <section class="weakness-section" aria-labelledby="weakness-title">
+      <div class="section-heading">
+        <p class="eyebrow" id="weakness-title">SAVED WEAKNESSES / MOST RECENT FIRST</p>
+        {% if context.weak_concepts %}<p class="section-note">From your local mistake history.</p>{% endif %}
+      </div>
+
+      {% if context.weak_concepts %}
+      <div class="weakness-list">
+        {% for concept in context.weak_concepts %}
+        <article class="weakness-card{% if loop.first %} weakness-primary{% else %} weakness-secondary{% endif %}" data-origin="{{ concept.latest_mistake.origin }}">
+          <div class="weakness-top">
+            <p class="eyebrow">{% if loop.first %}PRIMARY WEAKNESS{% else %}SECONDARY WEAKNESS{% endif %}</p>
+            <span class="miss-count">{{ concept.mistake_event_count }} SAVED MISS{% if concept.mistake_event_count != 1 %}ES{% endif %}</span>
+          </div>
+          <h2>{{ concept.label }}</h2>
+          <p class="weakness-explanation">{{ concept.explanation }}</p>
+
+          <div class="mistake-context" data-origin="{{ concept.latest_mistake.origin }}">
+            <p class="eyebrow">LATEST MISSED QUESTION</p>
+            <p class="mistake-question">{{ concept.latest_mistake.question }}</p>
+            <dl class="answer-grid">
+              <div>
+                <dt>YOU CHOSE</dt>
+                <dd class="chosen">{{ concept.latest_mistake.chosen_answer }}</dd>
+              </div>
+              <div>
+                <dt>CORRECT ANSWER</dt>
+                <dd class="correct">{{ concept.latest_mistake.correct_answer }}</dd>
+              </div>
+            </dl>
+            <p class="mistake-why"><span>WHY</span> {{ concept.latest_mistake.explanation }}</p>
+            <p class="timestamp"><time datetime="{{ concept.latest_mistake.occurred_at_utc }}">{{ format_utc(concept.latest_mistake.occurred_at_utc) }}</time></p>
+          </div>
+
+          <form class="weakness-review-action" action="{{ url_for('main.start_review') }}" method="post">
+            <input type="hidden" name="concept_id" value="{{ concept.concept_id }}">
+            <button class="button{% if not loop.first %} button-secondary{% endif %}" type="submit">REVISIT WEAKNESS</button>
+          </form>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-memory">
+        <p class="eyebrow">NO SAVED MISTAKES</p>
+        <h2>No saved mistakes are available yet.</h2>
+        <p>When you miss a battle question, the saved weakness will appear here.</p>
+      </div>
+      {% endif %}
+    </section>
+
+    <div class="action-row mentor-actions">
+      <a class="button" href="{{ url_for('main.construct') }}">DOWNLOAD A NEW TOPIC</a>
+    </div>
+    <p class="mentor-note" id="revisit-note">Revisiting a weakness creates two fresh practice questions. It never changes your saved mistake history.</p>
+  </div>
+</section>
+{% endblock %}

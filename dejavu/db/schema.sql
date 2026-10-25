@@ -42,4 +42,23 @@ CREATE TABLE IF NOT EXISTS mistake_events (
 CREATE INDEX IF NOT EXISTS idx_mistake_events_concept_time
     ON mistake_events (weak_concept_id, occurred_at DESC);
 
-PRAGMA user_version = 2;
+-- Review outcomes are stored separately from mistake events so that later
+-- improvement never edits or erases the original mistake history.
+CREATE TABLE IF NOT EXISTS review_outcomes (
+    id TEXT PRIMARY KEY,
+    review_id TEXT NOT NULL,
+    question_instance_id TEXT NOT NULL,
+    weak_concept_id INTEGER NOT NULL REFERENCES weak_concepts(id),
+    question_text TEXT NOT NULL,
+    chosen_answer TEXT NOT NULL,
+    correct_answer TEXT NOT NULL,
+    is_correct INTEGER NOT NULL CHECK (is_correct IN (0, 1)),
+    explanation TEXT NOT NULL,
+    occurred_at TEXT NOT NULL,
+    UNIQUE (review_id, question_instance_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_review_outcomes_concept_time
+    ON review_outcomes (weak_concept_id, occurred_at DESC);
+
+PRAGMA user_version = 3;

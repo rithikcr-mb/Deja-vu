@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Victory — DEJAVU{% endblock %}
+{% block content %}
+<section class="victory-stage" aria-labelledby="victory-title">
+  <div class="victory-panel">
+    <p class="eyebrow">FINAL BOSS DEFEATED</p>
+    <p class="victory-mark" aria-hidden="true">LOOP BROKEN</p>
+    <h1 id="victory-title" class="victory-title">Victory.</h1>
+    <p class="victory-lead">You faced the final encounter and won.</p>
+
+    <dl class="victory-stats" aria-label="Encounter result">
+      <div>
+        <dt>FINAL BOSS</dt>
+        <dd>{{ boss.boss_hp }} / 100 HP</dd>
+      </div>
+      <div>
+        <dt>OPERATOR</dt>
+        <dd>{{ boss.player_hp }} / 100 HP</dd>
+      </div>
+      <div>
+        <dt>WEAK SPOTS FACED</dt>
+        <dd>{{ boss.weak_spot_count }}</dd>
+      </div>
+      <div>
+        <dt>ADAPTIVE TESTS</dt>
+        <dd>{{ boss.adaptive_count }}</dd>
+      </div>
+    </dl>
+
+    <div class="victory-summary">
+      {% if boss.weak_spot_count %}
+      <p>You overcame the final encounter. {{ boss.weak_spot_count }} of its question{% if boss.weak_spot_count != 1 %}s were weak spots{% else %} was a weak spot{% endif %} drawn from concepts you previously missed{% if boss.adaptive_count %}, and {{ boss.adaptive_count }} were adaptive test{% if boss.adaptive_count != 1 %}s{% endif %} from the current lesson{% endif %}.</p>
+      {% if boss.adaptive_count %}<p class="victory-note">The adaptive tests were not personal weak spots.</p>{% endif %}
+      <p class="victory-note">Your original mistake history remains saved.</p>
+      {% else %}
+      <p>You overcame the final encounter. No saved weak spots were available, so {% if boss.adaptive_count == 1 %}its question was an adaptive test{% else %}all {{ boss.adaptive_count }} questions were adaptive tests{% endif %} drawn from the current lesson.</p>
+      {% endif %}
+    </div>
+
+    <div class="victory-actions">
+      <a class="button" href="{{ url_for('main.construct') }}">RETURN TO CONSTRUCT</a>
+    </div>
+    {% if fake_mode %}<p class="mode-note">DETERMINISTIC LOCAL TEST MODE — sample boss content.</p>{% endif %}
+  </div>
+</section>
+{% endblock %}

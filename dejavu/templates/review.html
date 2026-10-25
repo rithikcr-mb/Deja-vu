@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}Weakness Review — DEJAVU{% endblock %}
+{% block content %}
+<section class="review-stage" aria-labelledby="review-title">
+  <figure class="mentor-presence is-speaking">
+    <img class="mentor-portrait" src="{{ url_for('static', filename='img/mentor.svg') }}" alt="The Construct's mentor" width="360" height="440">
+    <figcaption class="mentor-signal"><span class="status-light" aria-hidden="true"></span> MEMORY LINK / STABLE</figcaption>
+  </figure>
+
+  <div class="review-copy">
+    <p class="eyebrow">WEAKNESS REVIEW / {{ review.concept_label }}</p>
+    <h1 id="review-title">{{ review.concept_label }}<br><span>Face what you missed.</span></h1>
+    {% if fake_mode %}<p class="mode-note">DETERMINISTIC LOCAL TEST MODE — sample review content.</p>{% endif %}
+
+    <section class="review-concept memory-card" aria-labelledby="review-concept-title">
+      <div>
+        <p class="eyebrow" id="review-concept-title">SAVED EXPLANATION</p>
+        <h2>{{ review.concept_label }}</h2>
+      </div>
+      <p class="weakness-explanation">{{ review.concept_explanation }}</p>
+    </section>
+
+    {% if review.original_question %}
+    <section class="mistake-context" aria-labelledby="review-original-title">
+      <p class="eyebrow" id="review-original-title">ORIGINAL MISSED QUESTION</p>
+      <p class="mistake-question">{{ review.original_question }}</p>
+      <dl class="answer-grid">
+        <div>
+          <dt>YOU CHOSE</dt>
+          <dd class="chosen">{{ review.original_chosen_answer }}</dd>
+        </div>
+        <div>
+          <dt>CORRECT ANSWER</dt>
+          <dd class="correct">{{ review.original_correct_answer }}</dd>
+        </div>
+      </dl>
+      {% if review.original_explanation %}<p class="mistake-why"><span>WHY</span> {{ review.original_explanation }}</p>{% endif %}
+    </section>
+    {% endif %}
+
+    {% if error %}<p class="message setup-message" role="alert">{{ error }}</p>{% endif %}
+
+    {% if review.phase == "question" and review.question %}
+    <section class="panel battle-panel review-panel" aria-labelledby="review-question-title">
+      <div class="boss-question-meta">
+        <p class="eyebrow">PRACTICE QUESTION {{ review.question_number }} OF {{ review.question_count }}</p>
+        <p class="boss-type-tag">REVIEW</p>
+      </div>
+
+      <h2 id="review-question-title" class="boss-question">{{ review.question.question }}</h2>
+      <form action="{{ url_for('main.answer_review_question') }}" method="post" class="answer-form boss-answer-form">
+        <input type="hidden" name="action_id" value="{{ review.attempt_id }}">
+        <fieldset>
+          <legend>Choose one answer</legend>
+          {% for option in review.question.options %}
+          <label class="answer-option" for="review-answer-{{ loop.index0 }}">
+            <input id="review-answer-{{ loop.index0 }}" type="radio" name="answer" value="{{ loop.index0 }}" required>
+            <span class="answer-key" aria-hidden="true">{{ "ABCD"[loop.index0] }}</span>
+            <span class="answer-text">{{ option }}</span>
+          </label>
+          {% endfor %}
+        </fieldset>
+        <p class="form-hint">A locked answer cannot be changed.</p>
+        <button class="button" type="submit">LOCK ANSWER</button>
+      </form>
+    </section>
+
+    {% elif review.phase == "answered" and review.result %}
+    <section class="panel battle-panel review-panel boss-result {% if review.result.is_correct %}boss-result-correct{% else %}boss-result-wrong{% endif %}" aria-live="polite" aria-labelledby="review-feedback-title">
+      <p class="eyebrow">{% if review.result.is_correct %}CORRECT / REVIEW ANSWER{% else %}INCORRECT / REVIEW ANSWER{% endif %}</p>
+      <h2 id="review-feedback-title">{% if review.result.is_correct %}Gap closed.{% else %}Not yet.{% endif %}</h2>
+
+      <dl class="answer-grid boss-answer-review">
+        <div>
+          <dt>YOUR ANSWER</dt>
+          <dd class="{% if review.result.is_correct %}correct{% else %}chosen{% endif %}">{{ review.result.chosen_answer }}</dd>
+        </div>
+        <div>
+          <dt>CORRECT ANSWER</dt>
+          <dd class="correct">{{ review.result.correct_answer }}</dd>
+        </div>
+      </dl>
+
+      <div class="result-explanation">
+        <p class="eyebrow">WHY</p>
+        <p>{{ review.result.explanation }}</p>
+      </div>
+
+      {% if review.next_action == "next_question" %}
+      <div class="boss-next">
+        <p class="boss-next-note">The next practice question is already locked in.</p>
+        <form action="{{ url_for('main.advance_review_question') }}" method="post">
+          <input type="hidden" name="action_id" value="{{ review.transition_id }}">
+          <button class="button" type="submit">NEXT QUESTION</button>
+        </form>
+      </div>
+      {% else %}
+      <div class="boss-next">
+        <p class="boss-next-note">Both practice questions are answered. Finish the review to see the summary and return to the mentor.</p>
+        <form action="{{ url_for('main.complete_review') }}" method="post">
+          <input type="hidden" name="action_id" value="{{ review.transition_id }}">
+          <button class="button" type="submit">FINISH REVIEW</button>
+        </form>
+      </div>
+      {% endif %}
+    </section>
+
+    {% elif review.phase == "complete" %}
+    <section class="panel battle-panel review-panel boss-result boss-result-correct" aria-labelledby="review-complete-title">
+      <p class="eyebrow">REVIEW COMPLETE</p>
+      <h2 id="review-complete-title">Review closed.</h2>
+      <p class="result-summary">{{ review.correct_count }} of {{ review.question_count }} practice questions answered correctly.</p>
+
+      <dl class="answer-grid boss-answer-review">
+        {% for answer in review.answers %}
+        <div>
+          <dt>QUESTION {{ answer.question_number }}</dt>
+          <dd class="{% if answer.is_correct %}correct{% else %}chosen{% endif %}">{{ "CORRECT" if answer.is_correct else "INCORRECT" }}</dd>
+        </div>
+        {% endfor %}
+      </dl>
+
+      <div class="result-explanation">
+        <p class="eyebrow">SAVED HISTORY</p>
+        <p>Your original mistake for {{ review.concept_label }} is untouched. This review is stored on its own, so your earlier miss and this result stay distinguishable.</p>
+      </div>
+
+      <div class="action-row review-actions">
+        <form action="{{ url_for('main.finish_review') }}" method="post">
+          <input type="hidden" name="action_id" value="{{ review.transition_id }}">
+          <button class="button" type="submit">REVIEW ANOTHER WEAKNESS</button>
+        </form>
+        <form action="{{ url_for('main.finish_review_for_new_topic') }}" method="post">
+          <input type="hidden" name="action_id" value="{{ review.transition_id }}">
+          <button class="button button-secondary" type="submit">DOWNLOAD A NEW TOPIC</button>
+        </form>
+      </div>
+    </section>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

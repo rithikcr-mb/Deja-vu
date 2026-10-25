@@ -67,11 +67,19 @@
 <section class="panel battle-panel" aria-live="polite">
   <p class="eyebrow">REGULAR ENCOUNTER COMPLETE</p>
   <h2>Three rounds cleared.</h2>
-  <p>Your missed concepts are saved. Return to the Construct or keep this session open for the next encounter.</p>
-  <form action="{{ url_for('main.return_from_battle') }}" method="post">
-    <input type="hidden" name="action_id" value="{{ battle.transition_id }}">
-    <button class="button button-secondary" type="submit">RETURN TO CONSTRUCT</button>
-  </form>
+  <p>Your missed concepts are saved. The final boss is built from what you missed and the lesson you just finished.</p>
+  <div class="action-row">
+    {% if boss_setup_id %}
+    <form action="{{ url_for('main.start_boss') }}" method="post">
+      <input type="hidden" name="action_id" value="{{ boss_setup_id }}">
+      <button class="button" type="submit">FACE THE FINAL BOSS</button>
+    </form>
+    {% endif %}
+    <form action="{{ url_for('main.return_from_battle') }}" method="post">
+      <input type="hidden" name="action_id" value="{{ battle.transition_id }}">
+      <button class="button button-secondary" type="submit">RETURN TO CONSTRUCT</button>
+    </form>
+  </div>
 </section>
 {% endif %}
 {% endblock %}

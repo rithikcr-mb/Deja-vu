@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}Final Boss — DEJAVU{% endblock %}
+{% block content %}
+<section class="battle-heading boss-heading" aria-labelledby="boss-title">
+  <p class="eyebrow">FINAL BOSS / {{ boss.question_count }}-QUESTION ENCOUNTER</p>
+  <h1 id="boss-title">{{ topic }}<br><span>Face what you missed.</span></h1>
+  {% if fake_mode %}<p class="mode-note">DETERMINISTIC LOCAL TEST MODE — sample boss questions.</p>{% endif %}
+</section>
+
+<section class="boss-progress" aria-label="Encounter progress">
+  <div class="boss-progress-label">
+    <span>ENCOUNTER PROGRESS</span>
+    <strong>QUESTION {{ boss.question_number }} / {{ boss.question_count }}</strong>
+  </div>
+  <div class="progress-track" role="progressbar" aria-label="Boss question progress" aria-valuemin="1" aria-valuemax="{{ boss.question_count }}" aria-valuenow="{{ boss.question_number }}" aria-valuetext="Question {{ boss.question_number }} of {{ boss.question_count }}">
+    <span class="progress-fill" style="width: {{ (boss.question_number / boss.question_count * 100)|round }}%"></span>
+  </div>
+</section>
+
+<section class="battle-status boss-status" aria-label="Boss health">
+  <div class="health-panel">
+    <div class="health-label"><span>OPERATOR</span><strong>{{ boss.player_hp }} / 100 HP</strong></div>
+    <div class="health-track" role="meter" aria-label="Operator health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ boss.player_hp }}" aria-valuetext="{{ boss.player_hp }} of 100 hit points"><span class="player-health" style="width: {{ boss.player_hp }}%"></span></div>
+    <p class="health-state">{% if boss.player_hp == 0 %}OFFLINE{% elif boss.player_hp <= 40 %}CRITICAL{% else %}STABLE{% endif %}</p>
+  </div>
+  <div class="health-panel enemy-panel">
+    <div class="health-label"><span>FINAL BOSS</span><strong>{{ boss.boss_hp }} / 100 HP</strong></div>
+    <div class="health-track" role="meter" aria-label="Boss health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ boss.boss_hp }}" aria-valuetext="{{ boss.boss_hp }} of 100 hit points"><span class="enemy-health" style="width: {{ boss.boss_hp }}%"></span></div>
+    <p class="health-state">{% if boss.boss_hp == 0 %}DEFEATED{% elif boss.boss_hp <= 25 %}CRITICAL{% else %}HOSTILE{% endif %}</p>
+  </div>
+</section>
+
+{% if error %}<p class="message setup-message" role="alert">{{ error }}</p>{% endif %}
+
+{% if boss.phase == "question" and boss.question %}
+<section class="panel battle-panel boss-panel" aria-labelledby="boss-question-title">
+  <div class="boss-question-meta">
+    <p class="eyebrow">QUESTION {{ boss.question_number }} OF {{ boss.question_count }}</p>
+    <p class="boss-type-tag">{% if boss.question.kind == "weak_spot" %}SAVED WEAKNESS{% else %}CURRENT LESSON{% endif %}</p>
+  </div>
+
+  {% if boss.question.kind == "weak_spot" %}
+  <aside class="weak-spot-alert" aria-label="Weak spot detected">
+    <p class="weak-spot-tag"><span class="weak-spot-icon" aria-hidden="true">!</span>WEAK SPOT DETECTED</p>
+    <p class="weak-spot-concept">PREVIOUSLY MISSED: <strong>{{ boss.question.concept_label }}</strong></p>
+    <p class="weak-spot-explanation">{{ boss.question.concept_explanation }}</p>
+    <p class="weak-spot-explanation">This harder question targets that saved concept.</p>
+  </aside>
+  {% else %}
+  <aside class="adaptive-marker" aria-label="Adaptive test">
+    <p class="adaptive-tag">ADAPTIVE TEST</p>
+    <p class="adaptive-explanation">This question is drawn from the current lesson.</p>
+  </aside>
+  {% endif %}
+
+  <h2 id="boss-question-title" class="boss-question">{{ boss.question.question }}</h2>
+  <form action="{{ url_for('main.answer_boss_question') }}" method="post" class="answer-form boss-answer-form">
+    <input type="hidden" name="action_id" value="{{ boss.attempt_id }}">
+    <fieldset>
+      <legend>Choose one answer</legend>
+      {% for option in boss.question.options %}
+      <label class="answer-option" for="boss-answer-{{ loop.index0 }}">
+        <input id="boss-answer-{{ loop.index0 }}" type="radio" name="answer" value="{{ loop.index0 }}" required>
+        <span class="answer-key" aria-hidden="true">{{ "ABCD"[loop.index0] }}</span>
+        <span class="answer-text">{{ option }}</span>
+      </label>
+      {% endfor %}
+    </fieldset>
+    <p class="form-hint">A locked answer cannot be changed.</p>
+    <button class="button" type="submit">LOCK ANSWER</button>
+  </form>
+
+  <div class="boss-exit">
+    <p class="boss-exit-note">Leaving ends this encounter. Saved mistakes remain in your history.</p>
+    <form action="{{ url_for('main.return_from_boss') }}" method="post">
+      <input type="hidden" name="action_id" value="{{ boss.transition_id }}">
+      <button class="button button-secondary" type="submit">RETURN TO CONSTRUCT</button>
+    </form>
+  </div>
+</section>
+{% elif boss.phase == "answered" and boss.result %}
+<section class="panel battle-panel boss-panel boss-result {% if boss.result.is_correct %}boss-result-correct{% else %}boss-result-wrong{% endif %}" aria-live="polite" aria-labelledby="boss-feedback-title">
+  <p class="eyebrow">{% if boss.result.is_correct %}CORRECT / BOSS TAKES 25 DAMAGE{% else %}INCORRECT / OPERATOR LOSES 20 HP{% endif %}</p>
+  <h2 id="boss-feedback-title">{% if boss.result.is_correct %}Direct hit.{% else %}The boss found the gap.{% endif %}</h2>
+
+  <p class="result-summary">
+    {% if boss.result.is_correct %}
+    The boss drops to {{ boss.boss_hp }} / 100 HP.
+    {% else %}
+    Your operator drops to {{ boss.player_hp }} / 100 HP.
+    {% endif %}
+  </p>
+
+  <dl class="answer-grid boss-answer-review">
+    <div>
+      <dt>YOUR ANSWER</dt>
+      <dd class="{% if boss.result.is_correct %}correct{% else %}chosen{% endif %}">{{ boss.result.chosen_answer }}</dd>
+    </div>
+    <div>
+      <dt>CORRECT ANSWER</dt>
+      <dd class="correct">{{ boss.result.correct_answer }}</dd>
+    </div>
+  </dl>
+
+  <div class="result-explanation">
+    <p class="eyebrow">WHY</p>
+    <p>{{ boss.result.explanation }}</p>
+  </div>
+
+  {% if boss.next_action == "victory" %}
+  <p class="result-summary">Boss health reached zero.</p>
+  <form action="{{ url_for('main.return_from_boss') }}" method="post">
+    <input type="hidden" name="action_id" value="{{ boss.transition_id }}">
+    <button class="button" type="submit">RETURN TO CONSTRUCT</button>
+  </form>
+  {% elif boss.next_action == "defeat" %}
+  <div class="boss-defeat" role="status">
+    <strong>The final encounter is lost.</strong>
+    <p>Your saved mistakes remain in your history. Retrying restores both health pools to 100 and keeps the same validated question set.</p>
+  </div>
+  <div class="action-row">
+    <form action="{{ url_for('main.retry_boss_encounter') }}" method="post">
+      <input type="hidden" name="action_id" value="{{ boss.transition_id }}">
+      <button class="button" type="submit">RETRY BOSS</button>
+    </form>
+    <form action="{{ url_for('main.return_from_boss') }}" method="post">
+      <input type="hidden" name="action_id" value="{{ boss.transition_id }}">
+      <button class="button button-secondary" type="submit">RETURN TO CONSTRUCT</button>
+    </form>
+  </div>
+  {% else %}
+  <div class="boss-next">
+    <p class="boss-next-note">The encounter continues. The next question is already locked in.</p>
+    <form action="{{ url_for('main.advance_boss') }}" method="post">
+      <input type="hidden" name="action_id" value="{{ boss.transition_id }}">
+      <button class="button" type="submit">NEXT QUESTION</button>
+    </form>
+  </div>
+  {% endif %}
+</section>
+{% endif %}
+{% endblock %}
