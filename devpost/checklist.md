@@ -68,13 +68,13 @@ Build mode: learn
 ## Code Tour and App Map
 
 - [x] Learning activity complete — brief evidence-based recap of the real wrong-answer-to-saved-memory path; no interactive editor tour claimed.
-- [ ] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
+- [x] Optional edit and transfer reflection addressed — no optional code edit was needed; learner answered the transfer reflection.
 - [x] `devpost/app-map.html` generated from commit `4a00047`; relative source links and script-free offline content checked. A browser surface was unavailable for visual preview; map path shared with learner.
 
 Activity and evidence: Brief recap connected the wrong-answer path (`answer_battle_question` → `grade_answer` → `record_mistake_in_transaction` → battle feedback) to the 196-test verification. The app map gives an offline reference route; no interactive editor tour is claimed.
 Route and stops: Reference route in `devpost/app-map.html`; recap described the three code locations and `tests/test_battle_routes.py` evidence.
 Edit outcome: Not applicable to the brief recap; no optional wrap-up edit made.
-Reflection: Optional transfer question offered after final sign-off; response/decline pending. Keep personal response in the ignored profile only if volunteered.
+Reflection: Answered after final sign-off; the personal response is recorded only in ignored `learner-profile.md`.
 Activity mode: Brief evidence-based recap; static reference map checked offline; no browser preview available.
 
 ## Revisions
