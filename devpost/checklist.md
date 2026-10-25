@@ -56,14 +56,14 @@ Build mode: learn
 
 - [x] Early usable behavior explored — after slice 2, so feedback on the lesson-to-battle loop can shape mentor and boss presentation.
   Evidence: learner manually ran the live lesson-to-battle flow, played through the battle, lost at Round 3, and individually tested both defeat actions. `RETRY ROUND` restarted Round 3, and `RETURN TO CONSTRUCT` returned to the Construct screen. The learner approved Slice 2. Reload/mistake persistence was not part of the manual confirmation reported here.
-- [ ] Final kick-the-tires exploration and feedback completed — after slice 4.
-  Evidence so far: all 196 automated tests pass and the local fake-mode home page returns HTTP 200. Final manual exploration and learner feedback are still needed; the fake-mode server uses a separate seeded review database.
+- [x] Final kick-the-tires exploration and feedback completed — after slice 4.
+  Evidence: learner explicitly confirmed “ready to ship” after the final review prompt. No remaining issues or requested changes were reported. All 196 automated tests pass and the local fake-mode home page returned HTTP 200.
 
 ## Final Review
 
-- [ ] Final review complete — feedback resolved and learner confirms ready to ship.
+- [x] Final review complete — feedback resolved and learner confirms ready to ship.
   Mechanical verification: `python -m unittest discover -s tests -v` — 196 tests passed. The restricted runner could not create SQLite files in Python temporary directories, so the suite was rerun successfully with local filesystem permission. Live Gemini was not re-tested in this pass.
-  Pending: learner explores the running app, reports anything broken/confusing/worth changing, and explicitly confirms the proof of concept is ready after any requested fixes.
+  Learner sign-off: “ready to ship.” No final fixes were requested.
 
 ## Code Tour and App Map
 
@@ -74,7 +74,7 @@ Build mode: learn
 Activity and evidence: Brief recap connected the wrong-answer path (`answer_battle_question` → `grade_answer` → `record_mistake_in_transaction` → battle feedback) to the 196-test verification. The app map gives an offline reference route; no interactive editor tour is claimed.
 Route and stops: Reference route in `devpost/app-map.html`; recap described the three code locations and `tests/test_battle_routes.py` evidence.
 Edit outcome: Not applicable to the brief recap; no optional wrap-up edit made.
-Reflection: Not yet offered; keep personal response in the ignored profile only if volunteered.
+Reflection: Optional transfer question offered after final sign-off; response/decline pending. Keep personal response in the ignored profile only if volunteered.
 Activity mode: Brief evidence-based recap; static reference map checked offline; no browser preview available.
 
 ## Revisions
