@@ -57,7 +57,7 @@ Build mode: learn
 - [x] Early usable behavior explored — after slice 2, so feedback on the lesson-to-battle loop can shape mentor and boss presentation.
   Evidence: learner manually ran the live lesson-to-battle flow, played through the battle, lost at Round 3, and individually tested both defeat actions. `RETRY ROUND` restarted Round 3, and `RETURN TO CONSTRUCT` returned to the Construct screen. The learner approved Slice 2. Reload/mistake persistence was not part of the manual confirmation reported here.
 - [ ] Final kick-the-tires exploration and feedback completed — after slice 4.
-  Evidence so far: all 196 automated tests pass. Final manual exploration and learner feedback are still needed; the fake-mode server will use a separate disposable review database.
+  Evidence so far: all 196 automated tests pass and the local fake-mode home page returns HTTP 200. Final manual exploration and learner feedback are still needed; the fake-mode server uses a separate seeded review database.
 
 ## Final Review
 
@@ -67,15 +67,15 @@ Build mode: learn
 
 ## Code Tour and App Map
 
-- [ ] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
+- [x] Learning activity complete — brief evidence-based recap of the real wrong-answer-to-saved-memory path; no interactive editor tour claimed.
 - [ ] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
 - [x] `devpost/app-map.html` generated from commit `4a00047`; relative source links and script-free offline content checked. A browser surface was unavailable for visual preview; map path shared with learner.
 
-Activity and evidence: App map generated at `devpost/app-map.html`; its action trace follows `answer_battle_question` through `grade_answer`, `record_mistake_in_transaction`, and the battle feedback. Evidence includes `tests/test_battle_routes.py` and a passing 196-test suite. Learner code-tour activity and optional reflection remain to be addressed.
-Route and stops: Reference route prepared in the app map; learner has not yet toured the source interactively.
-Edit outcome: Not applicable; no optional wrap-up edit made.
+Activity and evidence: Brief recap connected the wrong-answer path (`answer_battle_question` → `grade_answer` → `record_mistake_in_transaction` → battle feedback) to the 196-test verification. The app map gives an offline reference route; no interactive editor tour is claimed.
+Route and stops: Reference route in `devpost/app-map.html`; recap described the three code locations and `tests/test_battle_routes.py` evidence.
+Edit outcome: Not applicable to the brief recap; no optional wrap-up edit made.
 Reflection: Not yet offered; keep personal response in the ignored profile only if volunteered.
-Activity mode: Static reference map checked offline; no browser preview available.
+Activity mode: Brief evidence-based recap; static reference map checked offline; no browser preview available.
 
 ## Revisions
 
