@@ -88,7 +88,7 @@ Activity mode: Brief evidence-based recap; static reference map checked offline;
 - [x] Public repository URL recorded (provided by learner): https://github.com/rithikcr-mb/Deja-vu.git
 - [x] Verify the video is publicly accessible without sign-in, under three minutes, shows the app working, and contains no unlicensed third-party material. Direct link verification was unavailable in this review.
 - [x] Verified the GitHub repository is publicly accessible and contains the app (`app.py`, `dejavu/`) plus `devpost/scope.md`, `devpost/prd.md`, and `devpost/spec.md` on `main`.
-- [x] GitHub license requirement remains pending: no `LICENSE` file is present at the public repository root (GitHub returned 404 for `/blob/main/LICENSE`). Add an appropriate open-source license only after choosing and approving its terms.
+- [x] GitHub license requirement verified: MIT License is present at the public repository root on main.
 - [x] Local publication hygiene checked: `.env`, `instance/`, and `devpost/learner-profile.md` are ignored and absent from tracked paths and the recorded Git object-path inventory; `.env.example` is the only tracked env file. A strong-pattern scan of 144 reachable Git blobs found no API-key-format, private-key, or populated `GEMINI_API_KEY` matches. This local check does not establish the published remote's contents or history.
 - [x] Learner reports completing the project name, short description, and required submission answers in the live form.
 - [x] Learner reports completing the Devpost Learn Skill Pack explanation, age-of-majority checkbox, and exit survey.
